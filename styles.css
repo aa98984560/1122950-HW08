@@ -1,0 +1,146 @@
+/* 設定版面底圖與顏色變數 */
+:root{
+    --bg: #0f1226;
+    --text: #e7e8ee;
+    --x: #ff6b6b; /* X 的顏色 */
+    --o: #4dd0e1; /* O 的顏色 (修正了講義中的 'el' 錯誤，確保顏色有效) */
+    --win: #ffe066; /* 勝利高亮色 */
+    --panel-bg: #171a33; /* 新增面板背景色 */
+}
+
+/* 全域設定 */
+*{box-sizing:border-box}
+html,body{height:100%;}
+body{
+    margin:0; 
+    font-family: 'Noto Sans TC', system-ui, -apple-system, sans-serif;
+    background:var(--bg); 
+    color:var(--text); 
+    display:grid; 
+    place-items:center; 
+    padding:24px;
+    /* 增加整體柔和的陰影效果 */
+    text-shadow: 0 0 5px rgba(0, 0, 0, 0.5); 
+}
+
+/* 主要容器與標題 */
+.container{ width: min(720px, 96%); text-align:center; }
+h1{ 
+    margin:0 0 16px 0; 
+    font-size:24px; 
+    /* 增加標題陰影 */
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+}
+
+/* 遊戲狀態顯示區域 */
+.status{ 
+    margin-bottom: 12px; 
+    font-size: 1.1em;
+    padding: 8px 16px;
+    background: var(--panel-bg);
+    border-radius: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+/* D. 讓目前輪到誰的文字顏色與其棋子顏色一致 */
+.status strong#turn{
+    font-size: 1.5em;
+    margin-left: 8px;
+    transition: color 0.3s;
+}
+.status strong#turn.x-turn{ color: var(--x); }
+.status strong#turn.o-turn{ color: var(--o); }
+#state{ font-weight: bold; }
+
+
+/* 棋盤區域設定 (使用 Grid 實現 3x3) */
+.board{
+    display:grid; grid-template-columns: repeat(3, 1fr); gap:12px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+    padding: 12px; border-radius: 14px; width:min(560px, 92%); aspect-ratio:1/1;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); /* 增加深度 */
+}
+
+/* 棋盤格子 (Button) */
+.cell{
+    border-radius:10px; 
+    background:linear-gradient(180deg, #121430,#0e1030); 
+    border:1px solid rgba(255,255,255,0.03);
+    font-size:64px; /* 字體加大 */
+    font-weight:800; 
+    display:grid; place-items:center;
+    cursor:pointer; user-select:none; -webkit-tap-highlight-color:transparent;
+    transition: background 0.2s, box-shadow 0.2s;
+}
+/* B. Cell 懸停效果 (Hover) */
+.cell:not([disabled]):hover{
+    background:linear-gradient(180deg, #181c3a,#141738); /* 稍微變亮 */
+    box-shadow: 0 0 15px rgba(77, 208, 225, 0.2); /* 增加邊緣光暈 */
+}
+
+/* 棋子樣式 */
+.cell.x{ color:var(--x); } 
+.cell.o{ color:var(--o); } 
+.cell.win{ 
+    background:var(--win); 
+    color:#000; 
+    /* 勝利時增加動畫效果 */
+    animation: win-pulse 1s infinite alternate; 
+}
+@keyframes win-pulse {
+    from { box-shadow: 0 0 10px var(--win); }
+    to { box-shadow: 0 0 30px var(--win); }
+}
+
+/* A. 計分板樣式 */
+.scoreboard{ 
+    margin-top:16px; 
+    text-align:left; 
+    display:inline-block;
+    padding: 12px 20px;
+    background: var(--panel-bg);
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+.scoreboard h2{ 
+    margin-bottom:8px; 
+    font-size:1.2em;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 5px;
+}
+.scoreboard p{ margin: 4px 0; }
+.scoreboard span{ font-weight: bold; margin-left: 8px; }
+
+
+/* C. 控制按鈕與 Reset 鍵 */
+.controls{ margin-top:18px; display: flex; justify-content: center; gap: 10px; }
+button{ 
+    padding:10px 16px; 
+    border-radius:10px; 
+    border:0; 
+    background:#21264a; 
+    color:var(--text);
+    cursor:pointer;
+    transition: background 0.2s, transform 0.1s;
+    font-weight: bold;
+}
+/* 主按鈕：重開一局 */
+#reset {
+    background: var(--x); /* 使用 X 的顏色作為突出色 */
+    color: var(--bg);
+}
+#reset:hover {
+    background: #ff8a8a;
+    transform: translateY(-1px);
+}
+/* 次要按鈕：重置計分 */
+#reset-all {
+    background: #4a517a;
+}
+#reset-all:hover {
+    background: #5b638e;
+    transform: translateY(-1px);
+}
+
+button:disabled{ opacity:.5; cursor:not-allowed; transform: none; }
